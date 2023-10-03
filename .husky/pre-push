@@ -1,0 +1,11 @@
+#!/bin/sh
+
+protected_branch="main"
+current_branch=$(git symbolic-ref --short HEAD)
+
+if [ "$current_branch" = "$protected_branch" ]; then
+  echo "Erro: Push direto para a branch principal não é permitido."
+  exit 1
+fi
+
+exit 0
