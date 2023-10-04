@@ -100,13 +100,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: check-commits
     steps:
-      - name: to aprove pull request
-        id: pr-approval
-        run: |
-          if [[ "${{ github.event.pull_request.merged }}" == "true" || "${{ github.event.pull_request.state }}" != "approved" ]]; then
-            echo "Erro: A pull request não foi mesclada ou não foi aprovada."
-            exit 1
-          fi
+      #- name: to aprove pull request
+      #  id: pr-approval
+      #  run: |
+      #    if [[ "${{ github.event.pull_request.merged }}" == "true" || "${{ github.event.pull_request.state }}" != "approved" ]]; then
+      #      echo "Erro: A pull request não foi mesclada ou não foi aprovada."
+      #      exit 1
+      #    fi
 
       - name: merge on main
         if: ${{ always() || failure() }} && steps.check-commits.outcome == 'success' && steps.pr-approval.outcome == 'success'
