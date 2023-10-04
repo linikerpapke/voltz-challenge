@@ -75,7 +75,7 @@ jobs:
         run: npm run format
 
       - name: Run Jest Coverage
-        run: npm test:cov
+        run: npm run test:cov
 
       - name: Check Coverage
         run: |
