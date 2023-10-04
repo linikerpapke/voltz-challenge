@@ -50,10 +50,10 @@ jobs:
         id: commit-check
         run: |
           prefix="^(chore|docs|feat|fix|refactor|style|test):"
-          commits=$(git log --format='%s' ${{ github.event.before }}..${{ github.event.after }})
+          commits=$(git log --format='%s' main..)
           for commit in $commits; do
             if ! [[ $commit =~ $prefix ]]; then
-              echo "Erro: O commit '$commit' não possui um prefixo válido (feat, chore ou fix)"
+              echo "Erro: O commit '$commit' não possui um prefixo válido (feat, chore, fix, etc...)"
               exit 1
             fi
           done
