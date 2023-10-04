@@ -108,11 +108,16 @@ jobs:
       #      exit 1
       #    fi
 
-      - name: merge on main
+      - name: Configure Git
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+    
+      - name: Checkout Main Branch
+        run: git checkout ${{ github.base_ref }}
+    
+      - name: Merge Changes
         if: ${{ always() || failure() }} && steps.check-commits.outcome == 'success' && steps.pr-approval.outcome == 'success'
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git checkout main
           git merge --no-ff ${{ github.event.pull_request.head.ref }}
-          git push origin main
+          git push origin ${{ github.base_ref }}
