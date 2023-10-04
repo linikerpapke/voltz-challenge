@@ -108,7 +108,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          path: .
+          ref: ${{ github.event.pull_request.base.ref }}
 
       #- name: to aprove pull request
       #  id: pr-approval
@@ -118,16 +118,13 @@ jobs:
       #      exit 1
       #    fi
 
-      - name: Configure Git
-        run: |
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
-    
-      - name: Checkout Main Branch
-        run: git checkout ${{ github.base_ref }}
+      #- name: Configure Git
+      #  run: |
+      #    git config user.email "action@github.com"
+      #    git config user.name "GitHub Action"
     
       - name: Merge Changes
-        if: ${{ always() || failure() }} && steps.check-commits.outcome == 'success' && steps.pr-approval.outcome == 'success'
+      #  if: ${{ always() || failure() }} && steps.check-commits.outcome == 'success' && steps.pr-approval.outcome == 'success'
         run: |
           git merge --no-ff ${{ github.event.pull_request.head.ref }}
-          git push origin ${{ github.base_ref }}
+          git push origin ${{ github.event.pull_request.base.ref }}
