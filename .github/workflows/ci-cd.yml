@@ -42,7 +42,7 @@ jobs:
           echo "Diretório de trabalho do GitHub Actions: $GITHUB_WORKSPACE"
         
       - name: Checkout Code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
         with:
           path: .
 
@@ -50,7 +50,9 @@ jobs:
         id: commit-check
         run: |
           prefix="^(chore|docs|feat|fix|refactor|style|test):"
-          commits=$(git log --format='%s' ${{ github.head_ref }})
+          base_sha=$(git rev-parse ${{ github.event.pull_request.base.ref }})
+          head_sha=$(git rev-parse ${{ github.event.pull_request.head.ref }})
+          commits=$(git log --format='%s' --name-only origin/$base_sha..$head_sha)
           for commit in $commits; do
             if ! [[ $commit =~ $prefix ]]; then
               echo "Erro: O commit '$commit' não possui um prefixo válido (feat, chore, fix, etc...)"
