@@ -107,6 +107,8 @@ jobs:
 
       - name: Checkout Code
         uses: actions/checkout@v2
+        with:
+          path: .
 
       #- name: to aprove pull request
       #  id: pr-approval
