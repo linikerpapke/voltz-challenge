@@ -104,9 +104,9 @@ jobs:
       - name: Verify Working Directory
         run: |
           echo "Diretório de trabalho do GitHub Actions: $GITHUB_WORKSPACE"
-          
+
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       #- name: to aprove pull request
       #  id: pr-approval
