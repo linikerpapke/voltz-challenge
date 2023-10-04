@@ -42,9 +42,9 @@ jobs:
           echo "Diretório de trabalho do GitHub Actions: $GITHUB_WORKSPACE"
         
       - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          path: .
+        uses: actions/checkout@v3 #actions/checkout@v2
+        #with:
+          #path: .
 
       - name: Verify Commits
         id: commit-check
