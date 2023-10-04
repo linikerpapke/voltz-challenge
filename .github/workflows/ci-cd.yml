@@ -110,6 +110,13 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.ref }}
 
+      - name: Debug
+        run: |
+          git status
+          git branch
+          git merge --no-ff ${{ github.event.pull_request.head.ref }}
+          git push origin ${{ github.event.pull_request.base.ref }}
+
       #- name: to aprove pull request
       #  id: pr-approval
       #  run: |
