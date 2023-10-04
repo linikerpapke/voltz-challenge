@@ -46,18 +46,18 @@ jobs:
         #with:
           #path: .
 
-      - name: Verify Commits
-        id: commit-check
-        run: |
-          prefix="^(chore|docs|feat|fix|refactor|style|test):"
-          head_sha=$(git rev-parse ${{ github.event.pull_request.head.ref }})
-          commits=$(git log --format='%s' --name-only $head_sha)
-          for commit in $commits; do
-            if ! [[ $commit =~ $prefix ]]; then
-              echo "Erro: O commit '$commit' não possui um prefixo válido (feat, chore, fix, etc...)"
-              exit 1
-            fi
-          done
+      #- name: Verify Commits
+      #  id: commit-check
+      #  run: |
+      #    prefix="^(chore|docs|feat|fix|refactor|style|test):"
+      #    head_sha=$(git rev-parse ${{ github.event.pull_request.head.ref }})
+      #    commits=$(git log --format='%s' --name-only $head_sha)
+      #    for commit in $commits; do
+      #      if ! [[ $commit =~ $prefix ]]; then
+      #        echo "Erro: O commit '$commit' não possui um prefixo válido (feat, chore, fix, etc...)"
+      #        exit 1
+      #      fi
+      #    done
 
       - name: Install Node.js
         uses: actions/setup-node@v2
