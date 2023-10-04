@@ -1,18 +1,43 @@
 name: commit and merge control
 
 on:
-  pull_request:
+  pull_request_review:
     types:
-      - opened
-      - synchronize
-      - reopened
-      - edited
+      - submitted
 
 jobs:
+
+  check-approval:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify Approval
+        id: approval-check
+        run: |
+          pr_number=$(jq -r ".pull_request.number" "$GITHUB_EVENT_PATH")
+          approval_state=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$pr_number/reviews" | jq -r ".[] | select(.state == \"APPROVED\") | .state")
+          
+          if [[ "$approval_state" == "APPROVED" ]]; then
+            echo "A pull request foi aprovada."
+          else
+            echo "A pull request não foi aprovada. Não executando ação."
+            exit 0  # Saia sem erro se não for aprovada
+          fi
+
   check-commits:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Verify Working Directory
+        run: |
+          echo "Diretório de trabalho do GitHub Actions: $GITHUB_WORKSPACE"
+        
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          path: .
+
       - name: verify commits
         id: commit-check
         run: |
@@ -24,9 +49,6 @@ jobs:
               exit 1
             fi
           done
-
-      - name: Checkout Code
-        uses: actions/checkout@v2
 
       - name: Install Node.js
         uses: actions/setup-node@v2
