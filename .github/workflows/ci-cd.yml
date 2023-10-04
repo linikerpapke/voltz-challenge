@@ -50,13 +50,15 @@ jobs:
         id: commit-check
         run: |
           prefix="^(chore|docs|feat|fix|refactor|style|test):"
-          commits=$(git log --format='%s' ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }})
-          for commit in $commits; do
+          base_sha=$(git rev-parse "refs/heads/${{ github.event.pull_request.base.ref }}")
+          head_sha=$(git rev-parse "refs/heads/${{ github.event.pull_request.head.ref }}")
+          commits=$(git log --format='%s' $base_sha..$head_sha --)
+            for commit in $commits; do
             if ! [[ $commit =~ $prefix ]]; then
               echo "Erro: O commit '$commit' não possui um prefixo válido (feat, chore, fix, etc...)"
               exit 1
             fi
-          done
+            done
 
       - name: Install Node.js
         uses: actions/setup-node@v2
