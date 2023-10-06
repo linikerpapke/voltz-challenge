@@ -2,6 +2,8 @@ FROM node:alpine
 
 WORKDIR /usr/src/api
 
+RUN rm -rf node_modules
+
 COPY . .
 
 COPY ./.env ./.env

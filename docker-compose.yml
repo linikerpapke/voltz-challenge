@@ -28,8 +28,14 @@ services:
       - '3000:3000'
     depends_on:
       - db
-    volumes:
-      - ./src:/usr/src/api/src
+    command:
+      [
+        "./wait-for-postgres.sh",
+        "db",
+        "npm",
+        "run",
+        "start:dev"
+      ]
 
 volumes:
   postgres-data:

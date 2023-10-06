@@ -1,20 +1,17 @@
-import { Module } from '@nestjs/common';
-//import { TagsService } from './tags.service';
+import { forwardRef, Module } from '@nestjs/common';
 import { TagsController } from './tags.controller';
 import { PrismaService } from 'src/infrastructure/database/prisma/prisma.service';
 import { PrismaTagRepository } from 'src/infrastructure/database/prisma/prisma.tag.repository';
 import { CreateTagUseCase } from 'src/application/tags/use-cases/create-tag.use-case';
 import { TagRepositoryInterface } from 'src/domain/repository/tag.repository';
 import { CreateOrGetTagUseCase } from 'src/application/tags/use-cases/create-or-get-tag.use-case';
+import { ToolsModule } from '../tools/tools.module';
 
 @Module({
-  imports: [
-    /* PrismaModule */
-  ],
+  imports: [forwardRef(() => ToolsModule)],
   controllers: [TagsController],
   providers: [
-    ,
-    /* TagsService */ PrismaService,
+    PrismaService,
     {
       provide: PrismaTagRepository,
       useClass: PrismaTagRepository,
