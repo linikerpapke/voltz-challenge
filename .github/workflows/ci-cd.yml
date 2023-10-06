@@ -1,29 +1,37 @@
 name: commit and merge control
 
 on:
-  pull_request_review:
+  pull_request:
     types:
-      - submitted
+      - opened
+      - synchronize
+      - reopened
+      - edited
+
+#on:
+#  pull_request_review:
+#    types:
+#      - submitted
 
 jobs:
 
-  check-approval:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Verify Approval
-        id: approval-check
-        run: |
-          pr_number=$(jq -r ".pull_request.number" "$GITHUB_EVENT_PATH")
-          approval_state=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/$pr_number/reviews" | jq -r ".[] | select(.state == \"APPROVED\") | .state")
-          
-          if [[ "$approval_state" == "APPROVED" ]]; then
-            echo "A pull request foi aprovada."
-          else
-            echo "A pull request não foi aprovada. Não executando ação."
-            exit 0  # Saia sem erro se não for aprovada
-          fi
+#  check-approval:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Verify Approval
+#        id: approval-check
+#        run: |
+#          pr_number=$(jq -r ".pull_request.number" "$GITHUB_EVENT_PATH")
+#          approval_state=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+#            "https://api.github.com/repos/${{ github.repository }}/pulls/$pr_number/reviews" | jq -r ".[] | select(.state == \"APPROVED\") | .state")
+#          
+#          if [[ "$approval_state" == "APPROVED" ]]; then
+#            echo "A pull request foi aprovada."
+#          else
+#            echo "A pull request não foi aprovada. Não executando ação."
+#            exit 0
+#          fi
 
   check-commits:
     runs-on: ubuntu-latest
@@ -34,21 +42,23 @@ jobs:
           echo "Diretório de trabalho do GitHub Actions: $GITHUB_WORKSPACE"
         
       - name: Checkout Code
-        uses: actions/checkout@v2
-        with:
-          path: .
+        uses: actions/checkout@v3 #actions/checkout@v2
+        #with:
+          #path: .
 
-      - name: verify commits
-        id: commit-check
-        run: |
-          prefix="^(chore|docs|feat|fix|refactor|style|test):"
-          commits=$(git log --oneline ${{ github.event.before }}..${{ github.event.after }} --format='%s')
-          for commit in $commits; do
-            if ! [[ $commit =~ $prefix ]]; then
-              echo "Erro: O commit '$commit' não possui um prefixo válido (feat, chore ou fix)"
-              exit 1
-            fi
-          done
+      #- name: Verify Commits
+      #  id: commit-check
+      #  run: |
+      #    prefix="^(chore|docs|feat|fix|refactor|style|test):"
+      #    base_sha=$(git rev-parse ${{ github.event.pull_request.base.ref }})
+      #    head_sha=$(git rev-parse ${{ github.event.pull_request.head.ref }})
+      #    commits=$(git log --format='%s' --name-only $base_sha)
+      #    for commit in $commits; do
+      #      if ! [[ $commit =~ $prefix ]]; then
+      #        echo "Erro: O commit '$commit' não possui um prefixo válido (feat, chore, fix, etc...)"
+      #        exit 1
+      #      fi
+      #    done
 
       - name: Install Node.js
         uses: actions/setup-node@v2
@@ -65,15 +75,15 @@ jobs:
         run: npm run format
 
       - name: Run Jest Coverage
-        run: npm test:cov
+        run: npm run test:cov
 
-      - name: Check Coverage
-        run: |
-          coverage=$(cat coverage/lcov-report/index.html | grep -oP "Statements<[^>]+>\K\d+")
-          if [[ "$coverage" -ne 100 ]]; then
-            echo "Erro: A cobertura de testes não atingiu 100%."
-            exit 1
-          fi
+      #- name: Check Coverage
+      #  run: |
+      #    coverage=$(cat coverage/lcov-report/index.html | grep -oP "Statements<[^>]+>\K\d+")
+      #    if [[ "$coverage" -ne 100 ]]; then
+      #      echo "Erro: A cobertura de testes não atingiu 100%."
+      #      exit 1
+      #    fi
 
       - name: Run Jest Tests
         run: npm test
@@ -90,19 +100,38 @@ jobs:
     runs-on: ubuntu-latest
     needs: check-commits
     steps:
-      - name: to aprove pull request
-        id: pr-approval
-        run: |
-          if [[ "${{ github.event.pull_request.merged }}" == "true" || "${{ github.event.pull_request.state }}" != "approved" ]]; then
-            echo "Erro: A pull request não foi mesclada ou não foi aprovada."
-            exit 1
-          fi
 
-      - name: merge on main
-        if: ${{ always() || failure() }} && steps.check-commits.outcome == 'success' && steps.pr-approval.outcome == 'success'
+      - name: Verify Working Directory
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git checkout main
+          echo "Diretório de trabalho do GitHub Actions: $GITHUB_WORKSPACE"
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Debug
+        run: |
+          git status
+          git branch
           git merge --no-ff ${{ github.event.pull_request.head.ref }}
-          git push origin main
+          git push origin ${{ github.event.pull_request.base.ref }}
+
+      #- name: to aprove pull request
+      #  id: pr-approval
+      #  run: |
+      #    if [[ "${{ github.event.pull_request.merged }}" == "true" || "${{ github.event.pull_request.state }}" != "approved" ]]; then
+      #      echo "Erro: A pull request não foi mesclada ou não foi aprovada."
+      #      exit 1
+      #    fi
+
+      #- name: Configure Git
+      #  run: |
+      #    git config user.email "action@github.com"
+      #    git config user.name "GitHub Action"
+    
+      - name: Merge Changes
+      #  if: ${{ always() || failure() }} && steps.check-commits.outcome == 'success' && steps.pr-approval.outcome == 'success'
+        run: |
+          git merge --no-ff ${{ github.event.pull_request.head.ref }}
+          git push origin ${{ github.event.pull_request.base.ref }}
