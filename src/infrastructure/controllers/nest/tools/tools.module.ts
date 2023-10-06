@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 //import { ToolsService } from './tools.service';
 import { ToolsController } from './tools.controller';
 //import { PrismaModule } from 'src/infra/prisma/prisma.module';
-import { TagsService } from 'src/tags/tags.service';
 import { CreateToolUseCase } from 'src/application/tools/use-cases/create-tool.use-case';
 import { ToolRepositoryInterface } from 'src/domain/repository/tool.repository';
 import { GetToolsUseCase } from 'src/application/tools/use-cases/get-tools.use-case';
