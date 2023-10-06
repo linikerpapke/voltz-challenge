@@ -5,6 +5,7 @@ import { PrismaService } from './prisma.service';
 import { CreateToolDTO } from 'src/application/tools/dtos/create-tool.dto';
 import { GetToolDTO } from 'src/application/tools/dtos/find-tool.dto';
 import { CreateOrGetTagUseCase } from 'src/application/tags/use-cases/create-or-get-tag.use-case';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PrismaToolRepository implements ToolRepositoryInterface {
@@ -25,7 +26,9 @@ export class PrismaToolRepository implements ToolRepositoryInterface {
         link,
         description,
         tags: {
-          connect: tags.map((tag) => ({ id: tag.id })),
+          connect: tags.map(
+            (tag) => ({ id: tag.id }) as Prisma.TagWhereUniqueInput,
+          ),
         },
       },
     });
@@ -54,7 +57,7 @@ export class PrismaToolRepository implements ToolRepositoryInterface {
     return tools;
   }
 
-  async deleteToolById(id: number): Promise<void> {
+  async deleteToolById(id: string): Promise<void> {
     await this.prisma.prismaClient.tool.delete({
       where: {
         id: id,

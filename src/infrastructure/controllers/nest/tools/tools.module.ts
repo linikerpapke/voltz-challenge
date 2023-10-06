@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-//import { ToolsService } from './tools.service';
 import { ToolsController } from './tools.controller';
-//import { PrismaModule } from 'src/infra/prisma/prisma.module';
 import { CreateToolUseCase } from 'src/application/tools/use-cases/create-tool.use-case';
 import { ToolRepositoryInterface } from 'src/domain/repository/tool.repository';
 import { GetToolsUseCase } from 'src/application/tools/use-cases/get-tools.use-case';
@@ -11,21 +9,32 @@ import { CreateOrGetTagUseCase } from 'src/application/tags/use-cases/create-or-
 import { PrismaTagRepository } from 'src/infrastructure/database/prisma/prisma.tag.repository';
 import { DeleteToolByIdUseCase } from 'src/application/tools/use-cases/delete-tool.use-case';
 import { SearchToolsUseCase } from 'src/application/tools/use-cases/search-tool.use-case';
+import { TagsModule } from '../tags/tags.module';
+import { PrismaModule } from 'src/infrastructure/database/prisma/prisma.module';
+import { TagRepositoryInterface } from 'src/domain/repository/tag.repository';
 
 @Module({
-  imports: [
-    /* PrismaModule */
-  ],
+  imports: [TagsModule, PrismaModule],
   controllers: [ToolsController],
   providers: [
-    /* ToolsService, TagsService, */ PrismaService,
+    PrismaService,
     CreateOrGetTagUseCase,
-    PrismaTagRepository,
     DeleteToolByIdUseCase,
     SearchToolsUseCase,
     {
       provide: PrismaToolRepository,
       useClass: PrismaToolRepository,
+    },
+    {
+      provide: PrismaTagRepository,
+      useClass: PrismaTagRepository,
+    },
+    {
+      provide: CreateOrGetTagUseCase,
+      useFactory: (tagRepository: TagRepositoryInterface) => {
+        return new CreateOrGetTagUseCase(tagRepository);
+      },
+      inject: [PrismaTagRepository],
     },
     {
       provide: CreateToolUseCase,

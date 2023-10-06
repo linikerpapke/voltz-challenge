@@ -1,8 +1,8 @@
 export interface CreateToolDTO {
-  id?: number;
+  id?: string;
   title: string;
   link: string;
   description: string;
-  //tags?: number[] | string[];
-  tags?: (number | string)[] | [{}];
+  tags?: string[];
+  //tags?: (number | string)[] | [{}];
 }

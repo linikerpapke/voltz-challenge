@@ -74,8 +74,7 @@ export class ToolsController {
   @Delete(':id')
   async deleteTool(@Param('id') id: string) {
     try {
-      const toolId = Number(id);
-      await this.deleteToolUseCase.execute(toolId);
+      await this.deleteToolUseCase.execute(id);
       return { statusCode: HttpStatus.NO_CONTENT };
     } catch (error) {
       throw new HttpException(

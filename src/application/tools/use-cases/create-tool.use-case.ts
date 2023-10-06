@@ -9,7 +9,7 @@ type CreateToolInput = {
   tags?: string[];
 };
 
-type CreateToolOutput = CreateToolInput & { id: number };
+type CreateToolOutput = CreateToolInput & { id: string };
 
 export class CreateToolUseCase {
   constructor(

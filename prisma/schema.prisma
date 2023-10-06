@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Tool {
-  id          Int      @id @unique @default(autoincrement())
+  id          String   @id @unique @default(uuid())
   title       String   @unique
   link        String   @unique
   description String
@@ -23,7 +23,7 @@ model Tool {
 }
 
 model Tag {
-  id        Int      @id @default(autoincrement())
+  id          String   @id @unique @default(uuid())
   name      String   @unique
   tools     Tool[]
   createdAt DateTime @default(now())

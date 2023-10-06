@@ -1,24 +1,22 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export type TagProps = {
-  id?: number;
   name: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
 
 export class Tag {
+  public readonly id: string;
   public props: Required<TagProps>;
 
-  constructor(props: TagProps) {
+  constructor(props: TagProps, id?: string) {
+    this.id = id || uuidv4();
     this.props = {
       ...props,
-      id: props.id || null,
       createdAt: props.createdAt || new Date(),
       updatedAt: props.updatedAt || new Date(),
     };
-  }
-
-  get id(): number | null {
-    return this.props.id;
   }
 
   get name(): string {
