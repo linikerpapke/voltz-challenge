@@ -5,7 +5,7 @@ import { ToolRepositoryInterface } from 'src/domain/repository/tool.repository';
 export class DeleteToolByIdUseCase {
   constructor(private readonly toolRepository: ToolRepositoryInterface) {}
 
-  async execute(id: number): Promise<void> {
+  async execute(id: string): Promise<void> {
     await this.toolRepository.deleteToolById(id);
   }
 }

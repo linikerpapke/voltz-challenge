@@ -1,28 +1,26 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export type ToolProps = {
-  id?: number;
   title: string;
   link: string;
   description: string;
-  tags?: number[];
+  tags?: string[];
   createdAt?: Date;
   updatedAt?: Date;
 };
 
 export class Tool {
+  public readonly id: string;
   public props: Required<ToolProps>;
 
-  constructor(props: ToolProps) {
+  constructor(props: ToolProps, id?: string) {
+    this.id = id || uuidv4();
     this.props = {
       ...props,
-      id: props.id || null,
       tags: props.tags || [],
       createdAt: props.createdAt || new Date(),
       updatedAt: props.updatedAt || new Date(),
     };
-  }
-
-  get id(): number {
-    return this.props.id;
   }
 
   get title(): string {
@@ -37,7 +35,7 @@ export class Tool {
     return this.props.description;
   }
 
-  get tags(): number[] {
+  get tags(): string[] {
     return this.props.tags;
   }
 

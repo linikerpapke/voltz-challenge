@@ -5,16 +5,12 @@ type CreateTagInput = {
   name: string;
 };
 
-type CreateTagOutput = CreateTagInput & { id: number };
-
 export class CreateTagUseCase {
   constructor(private tagRepo: TagRepositoryInterface) {}
 
-  async execute(input: CreateTagInput): Promise<CreateTagOutput> {
+  async execute(input: CreateTagInput): Promise<Tag> {
     const tag = new Tag(input);
-
     await this.tagRepo.createTag(tag);
-
     return tag;
   }
 }

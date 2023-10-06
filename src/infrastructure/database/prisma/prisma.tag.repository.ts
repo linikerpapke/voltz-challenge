@@ -15,7 +15,6 @@ export class PrismaTagRepository implements TagRepositoryInterface {
     });
 
     return new Tag({
-      id: createdTag.id,
       name: createdTag.name,
       createdAt: createdTag.createdAt,
       updatedAt: createdTag.updatedAt,
@@ -34,7 +33,6 @@ export class PrismaTagRepository implements TagRepositoryInterface {
     }
 
     return new Tag({
-      id: foundTag.id,
       name: foundTag.name,
       createdAt: foundTag.createdAt,
       updatedAt: foundTag.updatedAt,

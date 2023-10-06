@@ -7,7 +7,7 @@ type CreateOrGetTagInput = {
 
 type CreateOrGetTagOutput = {
   name: string;
-  id: number | null;
+  id: string | null;
 };
 
 export class CreateOrGetTagUseCase {
@@ -25,8 +25,8 @@ export class CreateOrGetTagUseCase {
         results.push({ name: existingTag.name, id: existingTag.id });
       } else {
         const newTag = new Tag(input);
-        await this.tagRepo.createTag(newTag);
-        results.push({ name: input.name, id: newTag.id });
+        const createdTag = await this.tagRepo.createTag(newTag);
+        results.push({ name: createdTag.name, id: createdTag.id });
       }
     }
 

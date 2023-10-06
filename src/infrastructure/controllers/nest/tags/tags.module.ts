@@ -12,6 +12,7 @@ import { ToolsModule } from '../tools/tools.module';
   controllers: [TagsController],
   providers: [
     PrismaService,
+    CreateOrGetTagUseCase,
     {
       provide: PrismaTagRepository,
       useClass: PrismaTagRepository,

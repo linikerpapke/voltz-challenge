@@ -1,7 +1,7 @@
 import { ToolRepositoryInterface } from '../../../domain/repository/tool.repository';
 
 type ListTool = {
-  id?: number;
+  id?: string;
   title: string;
   link: string;
   description: string;
